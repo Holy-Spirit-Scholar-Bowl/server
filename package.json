@@ -1,0 +1,25 @@
+{
+  "name": "hssbserver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test:unit",
+    "test:unit": "npx jest --verbose --coverage --detectOpenHandles",
+    "start": "tsc && node index.js",
+    "test:watch": "npx jest --verbose --coverage --detectOpenHandles"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/jest": "^26.0.19",
+    "@types/websocket": "^1.0.1",
+    "@types/ws": "^7.2.6",
+    "jest": "^26.6.3",
+    "ts-jest": "^26.4.4",
+    "typescript": "^3.9.7",
+    "websocket": "^1.0.31",
+    "ws": "^7.3.1"
+  }
+}
