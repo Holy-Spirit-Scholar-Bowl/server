@@ -73,7 +73,7 @@ export default class WSServer {
     let cmd: SendCommand<T> = {
       command: type,
       parameters,
-      sent: new Date().getTime(),
+      sent: performance.now(),
       user: {
         name: "server",
         realName: "server",
@@ -95,7 +95,7 @@ export default class WSServer {
    */
   originAllowed(origin: string): boolean {
     return !!origin?.match(
-      /(https?:\/\/)?(hsscholarbowl\.github\.io|localhost)(:\d+)?\/?/
+      /(https?:\/\/)?(\w+\.github\.io|localhost)(:\d+)?\/?/
     );
   }
 
