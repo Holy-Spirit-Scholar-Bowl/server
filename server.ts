@@ -7,6 +7,7 @@ import {
 import { SendCommand, SendCommandParameters, SendCommandsKey } from "./types";
 import { createServer, Server } from "http";
 import Client from "./client";
+import { performance } from "perf_hooks"
 
 export default class WSServer {
   clients: Client[] = [];
