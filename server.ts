@@ -7,7 +7,7 @@ import {
 import { SendCommand, SendCommandParameters, SendCommandsKey } from "./types";
 import { createServer, Server } from "http";
 import Client from "./client";
-import { performance } from "perf_hooks"
+import { performance } from "perf_hooks";
 
 export default class WSServer {
   clients: Client[] = [];
@@ -16,7 +16,11 @@ export default class WSServer {
 
   wsServer?: WebSocketServer;
 
+  /**
+   * Initializes the server. Creates the HTTP server and starts the WS connection.
+   */
   startUp(): Promise<void> {
+    // TODO look into using async/await rather than pure Promise
     return new Promise(resolve => {
       this.server = createServer((request, response) => {
         this.log("RECEIVED REQUEST", "FOR", request.url);
@@ -75,7 +79,7 @@ export default class WSServer {
       command: type,
       parameters,
       sent: performance.now(),
-      user: {
+      user: { // It really shouldn't be necessary to do this
         name: "server",
         realName: "server",
         team: "",
@@ -95,6 +99,7 @@ export default class WSServer {
    * @param origin
    */
   originAllowed(origin: string): boolean {
+    // Matches any origin from *.github.io or localhost
     return !!origin?.match(
       /(https?:\/\/)?(\w+\.github\.io|localhost)(:\d+)?\/?/
     );
@@ -152,11 +157,12 @@ export default class WSServer {
     }
     this.log("ACCEPT ORIGIN", req.origin);
 
+    // TODO protocol is unnecessary
     let connection = req.accept("echo-protocol", req.origin);
     this.log("ACCEPT CONNECTION");
 
     connection.on("message", (data: IMessage) =>
-      this.onMessage(data, connection)
+      this.onMessage(data, connection);
     );
 
     connection.on("close", (code, desc) => {
