@@ -13,12 +13,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var websocket_1 = require("websocket");
 var http_1 = require("http");
 var client_1 = __importDefault(require("./client"));
+var perf_hooks_1 = require("perf_hooks");
 var WSServer = /** @class */ (function () {
     function WSServer() {
         this.clients = [];
     }
+    /**
+     * Initializes the server. Creates the HTTP server and starts the WS connection.
+     */
     WSServer.prototype.startUp = function () {
         var _this = this;
+        // TODO look into using async/await rather than pure Promise
         return new Promise(function (resolve) {
             _this.server = http_1.createServer(function (request, response) {
                 _this.log("RECEIVED REQUEST", "FOR", request.url);
@@ -62,7 +67,7 @@ var WSServer = /** @class */ (function () {
         var cmd = {
             command: type,
             parameters: parameters,
-            sent: new Date().getTime(),
+            sent: perf_hooks_1.performance.now(),
             user: {
                 name: "server",
                 realName: "server",
@@ -80,7 +85,8 @@ var WSServer = /** @class */ (function () {
      * @param origin
      */
     WSServer.prototype.originAllowed = function (origin) {
-        return !!(origin === null || origin === void 0 ? void 0 : origin.match(/(https?:\/\/)?(hsscholarbowl\.github\.io|localhost)(:\d+)?\/?/));
+        // Matches any origin from *.github.io or localhost
+        return !!(origin === null || origin === void 0 ? void 0 : origin.match(/(https?:\/\/)?(\w+\.github\.io|localhost)(:\d+)?\/?/));
     };
     /**
     * Gets the client with a specific connection
@@ -133,11 +139,10 @@ var WSServer = /** @class */ (function () {
             return;
         }
         this.log("ACCEPT ORIGIN", req.origin);
+        // TODO protocol is unnecessary
         var connection = req.accept("echo-protocol", req.origin);
         this.log("ACCEPT CONNECTION");
-        connection.on("message", function (data) {
-            return _this.onMessage(data, connection);
-        });
+        connection.on("message", function (data) { return _this.onMessage(data, connection); });
         connection.on("close", function (code, desc) {
             _this.onClose(code, desc);
         });

@@ -6,6 +6,7 @@ import {
   ReceiveCommands,
   ReceiveCommandsKey,
   CommandHandlerParameter,
+  SendOnlineParameters,
 } from "./types";
 
 /**
@@ -317,15 +318,32 @@ export default class BuzzerServer extends WSServer {
    * Updates the online list and sends it out
    */
   updateOnline() {
-    let list = this.clients.map((e) => {
+    let noTeam = this.clients.filter((client) => client.team === "").map((client) => {
+      return { user: client.name, points: client.points }
+    })
+
+    let onTeam = this.clients.filter((client) => client.team !== "")
+    let teams = Array.from(new Set(onTeam.map((client) => client.team)))
+
+    let teamPoints: SendOnlineParameters["teams"] = teams.map((team) => {
+      let clients = onTeam.filter((client) => client.team === team)
       return {
-        name: e.name,
-        points: e.points,
-      };
-    });
-    this.broadcast("online", {
-      online: list,
-    });
+        team,
+        points: clients.reduce((prev, curr) => prev + curr.points, 0),
+        users: clients.map((client) => {
+          return {
+            points: client.points,
+            user: client.name
+          }
+        })
+      }
+    })
+
+    let params: SendOnlineParameters = {
+      users: noTeam,
+      teams: teamPoints
+    }
+    this.broadcast("online", params)
   }
 }
 

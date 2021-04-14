@@ -66,9 +66,17 @@ export type SendBuzzerParameters = {
   buzzer: string | null;
 };
 export type SendOnlineParameters = {
-  online: {
-    name: string;
+  users: {
+    user: string;
     points: number;
+  }[];
+  teams: {
+    team: string;
+    points: number;
+    users: {
+      user: string;
+      points: number
+    }[];
   }[];
 };
 export type SendTeamParameters = {

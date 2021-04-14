@@ -92,6 +92,7 @@ var BuzzerServer = /** @class */ (function (_super) {
         if (command in types_1.ReceiveCommands) {
             // I really shouldn't have to cast here...oh well
             var handler = actions[command];
+            // Something really strange is happening with scoping here. Without using `.call`, `this` is `undefined` in the function
             handler.call(this, { cmd: data, conn: conn, client: client });
         }
         else {
@@ -119,7 +120,7 @@ var BuzzerServer = /** @class */ (function (_super) {
                 continue;
             client.team = user.team;
             this.sendMessage("team", {
-                team: user.team
+                team: user.team,
             }, client.conn);
         }
     };
@@ -168,7 +169,7 @@ var BuzzerServer = /** @class */ (function (_super) {
             this.activeBuzzer = cmd.user.name;
             this.buzzTime = cmd.sent;
             this.broadcast("buzz", {
-                buzzer: this.activeBuzzer
+                buzzer: this.activeBuzzer,
             }, conn);
         }
     };
@@ -269,15 +270,29 @@ var BuzzerServer = /** @class */ (function (_super) {
      * Updates the online list and sends it out
      */
     BuzzerServer.prototype.updateOnline = function () {
-        var list = this.clients.map(function (e) {
+        var noTeam = this.clients.filter(function (client) { return client.team === ""; }).map(function (client) {
+            return { user: client.name, points: client.points };
+        });
+        var onTeam = this.clients.filter(function (client) { return client.team !== ""; });
+        var teams = Array.from(new Set(onTeam.map(function (client) { return client.team; })));
+        var teamPoints = teams.map(function (team) {
+            var clients = onTeam.filter(function (client) { return client.team === team; });
             return {
-                name: e.name,
-                points: e.points,
+                team: team,
+                points: clients.reduce(function (prev, curr) { return prev + curr.points; }, 0),
+                users: clients.map(function (client) {
+                    return {
+                        points: client.points,
+                        user: client.name
+                    };
+                })
             };
         });
-        this.broadcast("online", {
-            online: list,
-        });
+        var params = {
+            users: noTeam,
+            teams: teamPoints
+        };
+        this.broadcast("online", params);
     };
     return BuzzerServer;
 }(server_1.default));
