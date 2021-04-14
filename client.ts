@@ -15,18 +15,11 @@ export default class Client {
   team: string = '';
 
   get points() {
-    if (this.team) {
-      return Client.points[`team_${this.team}`] ?? 0;
-    }
     return Client.points[this.realName] ?? 0;
   }
 
   set points(value: number) {
-    if (this.team) {
-      Client.points[`team_${this.team}`] = value;
-    } else {
-      Client.points[this.realName] = value;
-    }
+    Client.points[this.realName] = value;
   }
 
   static points: Record<string, number> = {};

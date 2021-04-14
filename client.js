@@ -14,19 +14,11 @@ var Client = /** @class */ (function () {
     };
     Object.defineProperty(Client.prototype, "points", {
         get: function () {
-            var _a, _b;
-            if (this.team) {
-                return (_a = Client.points["team_" + this.team]) !== null && _a !== void 0 ? _a : 0;
-            }
-            return (_b = Client.points[this.realName]) !== null && _b !== void 0 ? _b : 0;
+            var _a;
+            return (_a = Client.points[this.realName]) !== null && _a !== void 0 ? _a : 0;
         },
         set: function (value) {
-            if (this.team) {
-                Client.points["team_" + this.team] = value;
-            }
-            else {
-                Client.points[this.realName] = value;
-            }
+            Client.points[this.realName] = value;
         },
         enumerable: false,
         configurable: true

@@ -13,7 +13,6 @@ var SendCommands;
     SendCommands["online"] = "online";
     SendCommands["team"] = "team";
 })(SendCommands = exports.SendCommands || (exports.SendCommands = {}));
-;
 var ReceiveCommands;
 (function (ReceiveCommands) {
     ReceiveCommands["reset"] = "reset";
@@ -28,4 +27,3 @@ var ReceiveCommands;
     ReceiveCommands["points"] = "points";
     ReceiveCommands["restart"] = "restart";
 })(ReceiveCommands = exports.ReceiveCommands || (exports.ReceiveCommands = {}));
-;

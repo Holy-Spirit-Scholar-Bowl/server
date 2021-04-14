@@ -161,9 +161,7 @@ export default class WSServer {
     let connection = req.accept("echo-protocol", req.origin);
     this.log("ACCEPT CONNECTION");
 
-    connection.on("message", (data: IMessage) =>
-      this.onMessage(data, connection);
-    );
+    connection.on("message", (data: IMessage) => this.onMessage(data, connection));
 
     connection.on("close", (code, desc) => {
       this.onClose(code, desc);
