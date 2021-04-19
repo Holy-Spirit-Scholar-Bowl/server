@@ -1,4 +1,6 @@
-import { connection } from 'websocket';
+import { client, connection } from 'websocket';
+import { ReceiveCommand, ReceiveCommandsKey } from './types';
+import { performance } from "perf_hooks"
 export default class Client {
   conn: connection | null = null;
 
@@ -28,5 +30,19 @@ export default class Client {
     for (let key of Object.keys(Client.points)) {
       Client.points[key] = 0;
     }
+  }
+
+  sentMessageTimes: number[] = []
+
+  addMessageLog(msg: ReceiveCommand<ReceiveCommandsKey>) {
+    this.sentMessageTimes.push(msg.sent);
+
+    while (this.sentMessageTimes.length > 10) {
+      this.sentMessageTimes.shift()
+    }
+  }
+
+  get overRateLimit() {
+    return this.sentMessageTimes.length >= 10 && (this.sentMessageTimes[0] + 5000) > this.sentMessageTimes[9];
   }
 }

@@ -8,6 +8,7 @@ import {
   CommandHandlerParameter,
   SendOnlineParameters,
 } from "./types";
+import { performance } from "perf_hooks"
 
 /**
  * A websocket based buzzer server
@@ -105,6 +106,12 @@ export default class BuzzerServer extends WSServer {
       handler.call(this, { cmd: data, conn, client });
     } else {
       this.error(new Error(`UNKNOWN MESSAGE TYPE: ${msg}`));
+    }
+
+    client.addMessageLog(data)
+    if (client.overRateLimit) {
+      client.conn?.close(4002, "Too many actions");
+      this.log("KICK", client.name, "sent 10 messages in ", (client.sentMessageTimes[9] - client.sentMessageTimes[0]) / 1000, "seconds")
     }
   }
 

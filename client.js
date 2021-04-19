@@ -7,6 +7,7 @@ var Client = /** @class */ (function () {
         this.name = '';
         this.realName = '';
         this.team = '';
+        this.sentMessageTimes = [];
     }
     Client.prototype.sendMessage = function (message) {
         var _a;
@@ -29,6 +30,19 @@ var Client = /** @class */ (function () {
             Client.points[key] = 0;
         }
     };
+    Client.prototype.addMessageLog = function (msg) {
+        this.sentMessageTimes.push(msg.sent);
+        while (this.sentMessageTimes.length > 10) {
+            this.sentMessageTimes.shift();
+        }
+    };
+    Object.defineProperty(Client.prototype, "overRateLimit", {
+        get: function () {
+            return this.sentMessageTimes.length >= 10 && (this.sentMessageTimes[0] + 5000) > this.sentMessageTimes[9];
+        },
+        enumerable: false,
+        configurable: true
+    });
     Client.points = {};
     return Client;
 }());

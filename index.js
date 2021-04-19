@@ -63,6 +63,7 @@ var BuzzerServer = /** @class */ (function (_super) {
      * @param conn the connection it came from
      */
     BuzzerServer.prototype.onMessage = function (message, conn) {
+        var _a;
         this.log("RECEIVE", message.utf8Data);
         var client = this.getClientWithConnection(conn);
         var msg = message.utf8Data;
@@ -97,6 +98,11 @@ var BuzzerServer = /** @class */ (function (_super) {
         }
         else {
             this.error(new Error("UNKNOWN MESSAGE TYPE: " + msg));
+        }
+        client.addMessageLog(data);
+        if (client.overRateLimit) {
+            (_a = client.conn) === null || _a === void 0 ? void 0 : _a.close(4002, "Too many actions");
+            this.log("KICK", client.name, "sent 10 messages in ", (client.sentMessageTimes[9] - client.sentMessageTimes[0]) / 1000, "seconds");
         }
     };
     BuzzerServer.prototype.onRestartCommand = function (_a) {
