@@ -79,12 +79,6 @@ export default class WSServer {
       command: type,
       parameters,
       sent: performance.now(),
-      user: { // It really shouldn't be necessary to do this
-        name: "server",
-        realName: "server",
-        team: "",
-        host: false
-      }
     };
     let encoded = JSON.stringify(cmd);
     this.log("SEND", "type:", type, ", parameters:", JSON.stringify(parameters), ", full: ", encoded);

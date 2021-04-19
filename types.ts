@@ -91,13 +91,6 @@ export type Command<K, T extends string> = {
   parameters: K;
   /** The time, in milliseconds, the command was sent */
   sent: number;
-
-  user: {
-    name: string;
-    realName: string;
-    team: string;
-    host: boolean;
-  };
 };
 
 // we all love mapped types
@@ -122,7 +115,14 @@ export type ReceiveCommandParameters<
 export type ReceiveCommand<T extends ReceiveCommandsKey> = Command<
   ReceiveCommandParameters<T>,
   T
->;
+> & {
+  user: {
+    name: string;
+    realName: string;
+    team: string;
+    host: boolean;
+  };
+};
 
 export type SendCommandsMap = {
   buzz: SendBuzzParameters;
