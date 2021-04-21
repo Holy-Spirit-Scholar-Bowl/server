@@ -325,6 +325,7 @@ export default class BuzzerServer extends WSServer {
    * Updates the online list and sends it out
    */
   updateOnline() {
+    this.clients = this.clients.filter((client) => client.name.length > 0)
     let noTeam = this.clients.filter((client) => client.team === "").map((client) => {
       return { user: client.name, points: client.points }
     })
